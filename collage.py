@@ -4,7 +4,7 @@ import PIL.Image
 
 
 def fetch_images(user):
-    url = "https://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user={}&period=7day&limit=9&api_key={}&format=json"
+    url = "https://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user={}&period=7day&api_key={}&format=json"
     # fetch album data from api
     files = []
     print("Requesting data from API")
@@ -19,14 +19,26 @@ def fetch_images(user):
             os.mkdir("img")
 
         # download album art for each image
-        for album in albums["topalbums"]["album"]:
+        num = 0
+        while len(files) < 9:
+            album = albums["topalbums"]["album"][num]
             name = album["name"]
-            files.append(name)
+            # create safe filename
+            allow = (" ", ".", "_")
+            safe = "".join(c for c in name if c.isalnum() or c in allow).rstrip()
+            # download image
             img_url = album["image"][3]["#text"]
-            print("Downloading art for {}".format(name))
-            img_data = requests.get(img_url).content
-            with open("img/" + name + ".jpg", "wb") as f:
-                f.write(img_data)
+            if img_url:
+                files.append(safe)
+                print("Downloading art for {}".format(safe))
+                img_data = requests.get(img_url).content
+                with open("img/" + safe + ".jpg", "wb") as f:
+                    f.write(img_data)
+            else:
+                print("No album art for {}, skipping".format(safe))
+            num += 1
+    else:
+        print(r.text)
 
     return files
 
@@ -50,8 +62,8 @@ def create_image(files):
     final.save(user + ".jpg")
 
 
-API_KEY = "deefb7a6a7e90634377ac4ee87d466d5"
-user = "DET_024"
+API_KEY = ""
+user = ""
 
 files = fetch_images(user)
 if len(files) == 9:
