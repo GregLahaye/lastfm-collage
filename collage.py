@@ -30,10 +30,13 @@ def fetch_images(user):
             img_url = album["image"][3]["#text"]
             if img_url:
                 files.append(safe)
-                print("Downloading art for {}".format(safe))
-                img_data = requests.get(img_url).content
-                with open("img/" + safe + ".jpg", "wb") as f:
-                    f.write(img_data)
+                if not os.path.exists("img/" + safe + ".jpg"):
+                    print("Downloading art for {}".format(safe))
+                    img_data = requests.get(img_url).content
+                    with open("img/" + safe + ".jpg", "wb") as f:
+                        f.write(img_data)
+                else:
+                    print("Art for {} already exists".format(safe))
             else:
                 print("No album art for {}, skipping".format(safe))
             num += 1
