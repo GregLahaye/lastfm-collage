@@ -1,2 +1,6 @@
 img/
 *.jpg
+!rj.jpg
+__pycache__/
+*.pyc
+secrets.json

@@ -1,14 +1,16 @@
+import sys
 import os
 import requests
 import PIL.Image
+import secrets
 
 
 def fetch_images(user):
-    url = "https://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user={}&period=7day&api_key={}&format=json"
+    url = "https://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user={}&period=12month&api_key={}&format=json"
     # fetch album data from api
     files = []
     print("Requesting data from API")
-    r = requests.get(url.format(user, API_KEY))
+    r = requests.get(url.format(user, secrets.get_key()))
     print("[Response {}]".format(r.status_code))
     if r.status_code == 200:
         albums = r.json()
@@ -65,12 +67,16 @@ def create_image(files):
     final.save(user + ".jpg")
 
 
-API_KEY = ""
-user = ""
+if __name__ == "__main__":
+    if len(sys.argv) >= 2:
+        user = sys.argv[1]
+    else:
+        user = input("Username: ")
 
-files = fetch_images(user)
-if len(files) == 9:
-    create_image(files)
-else:
-    print("\nSomething went wrong")
-    print("({} albums retrieved, 9 required)".format(len(files)))
+    files = fetch_images(user)
+    if len(files) == 9:
+        create_image(files)
+    else:
+        print("\nSomething went wrong")
+        print("({} albums retrieved, 9 required)".format(len(files)))
+
