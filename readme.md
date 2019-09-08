@@ -3,5 +3,6 @@ Creates a 3x3 collage of your most listened to albums on Last.fm over the last w
 
 ## Example
 ![Example](example.gif "Example")
-![RJ](r.jpg "RJ")
+
+![RJ](rj.jpg "RJ")
 
